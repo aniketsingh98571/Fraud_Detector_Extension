@@ -109,7 +109,7 @@ const Popup: React.FC = () => {
 
   return (
     <div
-      className="flex h-[500px] w-[500px] flex-col rounded-lg"
+      className="flex w-[500px] flex-col rounded-lg"
       role="region"
       aria-label="Fraudvisor risk analysis"
       tabIndex={0}
@@ -155,7 +155,7 @@ const Popup: React.FC = () => {
           </p>
 
           {/* Actions */}
-          <div className="flex items-center justify-between gap-3 pt-6 mt-4 border-t border-opacity-20" style={{ borderColor: config.borderColor }}>
+          <div className="flex items-center justify-between gap-3 pt-6 mt-4 border-t border-opacity-20" style={{ borderColor: config.borderColor, padding: '20px 0' }}>
             <span className="font-medium opacity-85" style={{ fontSize: '0.875rem' }}>
               {Number.isFinite(analysis.rating)
                 ? `Risk rating: ${analysis.rating}/10`
