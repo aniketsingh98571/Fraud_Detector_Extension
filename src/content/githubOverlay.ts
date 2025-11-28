@@ -1,5 +1,5 @@
 import fetchRiskAnalysis, { type FraudAnalysisResult } from '../utils/fetchRiskAnalysis';
-import { createBadRepIcon, createScamIcon } from '../utils/riskIcons';
+import { createBadRepIcon, createScamIcon, createFraudvisorLogo } from '../utils/riskIcons';
 import { getRiskLevel, riskConfigs, getDefaultMessage, type RiskLevel } from '../utils/riskConfig';
 
 const OVERLAY_ID = 'fraudvisor-risk-overlay';
@@ -144,6 +144,11 @@ const createOverlay = (analysis: FraudAnalysisResult, level: RiskLevel) => {
   const headingContainer = document.createElement('div');
   headingContainer.className = 'fraudvisor-heading-container flex items-center gap-3';
   
+  // Add Fraudvisor logo
+  const logo = createFraudvisorLogo(24);
+  logo.setAttribute('aria-hidden', 'true');
+  headingContainer.appendChild(logo);
+  
   // Add icon for medium and high risk
   if (level === 'medium') {
     const icon = createBadRepIcon(40);
@@ -241,10 +246,16 @@ const renderRiskOverlay = (analysis: FraudAnalysisResult, level: RiskLevel) => {
     const existingShowMoreButton = existingOverlay.querySelector<HTMLAnchorElement>('.fraudvisor-show-more');
 
     if (headingContainer && heading) {
-      // Remove existing icon if any
-      const existingIcon = headingContainer.querySelector('svg');
-      if (existingIcon) {
-        existingIcon.remove();
+      // Remove existing risk icons (but keep logo)
+      const existingRiskIcons = headingContainer.querySelectorAll('svg[id!="fraudvisor-logo"]');
+      existingRiskIcons.forEach(icon => icon.remove());
+      
+      // Ensure logo exists
+      let logo = headingContainer.querySelector<SVGSVGElement>('#fraudvisor-logo');
+      if (!logo) {
+        logo = createFraudvisorLogo(24);
+        logo.setAttribute('aria-hidden', 'true');
+        headingContainer.insertBefore(logo, heading);
       }
       
       // Add icon for medium and high risk

@@ -4,6 +4,7 @@ import fetchRiskAnalysis, { type FraudAnalysisResult } from './utils/fetchRiskAn
 import { getRiskLevel, riskConfigs, getDefaultMessage, type RiskLevel } from './utils/riskConfig';
 import { getBadRepIconHTML, getScamIconHTML } from './utils/riskIcons';
 import extractPrimaryDomain from './utils/extractPrimaryDomain';
+import Logo from './assets/Logo';
 
 const Loader: React.FC = () => {
   return (
@@ -69,7 +70,8 @@ const Popup: React.FC = () => {
         aria-label="Fraudvisor popup loading"
         tabIndex={0}
       >
-        <div className="flex items-center justify-center px-6 py-4 border-b border-slate-200">
+        <div className="flex items-center justify-center gap-2 px-6 py-4 border-b border-slate-200">
+          <Logo width={24} height={24} />
           <h1 className="text-xl font-semibold text-slate-900">Fraudvisor</h1>
         </div>
         <Loader />
@@ -85,7 +87,8 @@ const Popup: React.FC = () => {
         aria-label="Fraudvisor popup"
         tabIndex={0}
       >
-        <div className="flex items-center justify-center px-6 py-4 border-b border-slate-200">
+        <div className="flex items-center justify-center gap-2 px-6 py-4 border-b border-slate-200">
+          <Logo width={24} height={24} />
           <h1 className="text-xl font-semibold text-slate-900">Fraudvisor</h1>
         </div>
         <div className="flex flex-col items-center justify-center h-full gap-4 p-6">
