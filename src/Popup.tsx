@@ -109,23 +109,24 @@ const Popup: React.FC = () => {
 
   return (
     <div
-      className="flex h-[500px] w-[500px] flex-col"
+      className="flex h-[500px] w-[500px] flex-col rounded-lg"
       role="region"
       aria-label="Fraudvisor risk analysis"
       tabIndex={0}
     >
       <div
-        className="flex flex-col h-full rounded-none shadow-2xl"
+        className="flex flex-col h-full  rounded-none shadow-2xl"
         style={{
           backgroundColor: config.backgroundColor,
           color: config.textColor,
           border: `1px solid ${config.borderColor}`,
           boxShadow: `0 40px 70px -25px ${config.shadowColor}`,
+          padding:"10px"
         }}
       >
-        <div className="flex flex-col gap-4 p-6 flex-1 overflow-y-auto">
+        <div className="flex flex-col gap-4  flex-1 overflow-y-auto">
           {/* Heading with icon */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center" style={{gap:10}}>
             {(riskLevel === 'medium' || riskLevel === 'high' || riskLevel === 'very-high') && (
               <div
                 className="flex-shrink-0"
@@ -135,27 +136,27 @@ const Popup: React.FC = () => {
                 }}
               />
             )}
-            <h2 className="text-xl font-semibold text-white">
+            <h2 className="font-semibold text-white" style={{ fontSize: '1.75rem' }}>
               {config.heading}
             </h2>
           </div>
 
-          {/* Subheading */}
-          <p className="text-sm opacity-90">
-            Fraudvisor analysis: {analysis.riskFactor ?? 'Unknown'} risk level
-          </p>
+          {/* Subheading with logo */}
+          <div className="flex items-center" style={{gap:10}}>
+            <Logo width={24} height={24} />
+            <p className="opacity-90" style={{ fontSize: '1rem' }}>
+              Fraudvisor analysis: {analysis.riskFactor ?? 'Unknown'} risk level
+            </p>
+          </div>
 
           {/* Message */}
-          <p className="text-sm opacity-95 leading-relaxed">
+          <p className="opacity-95 leading-relaxed" style={{ fontSize: '1rem' }}>
             {analysis.summary ?? getDefaultMessage(riskLevel)}
           </p>
 
-          {/* Spacer to push actions to bottom */}
-          <div className="flex-1"></div>
-
           {/* Actions */}
-          <div className="flex items-center justify-between gap-3 pt-4 border-t border-opacity-20" style={{ borderColor: config.borderColor }}>
-            <span className="text-xs font-medium opacity-85">
+          <div className="flex items-center justify-between gap-3 pt-6 mt-4 border-t border-opacity-20" style={{ borderColor: config.borderColor }}>
+            <span className="font-medium opacity-85" style={{ fontSize: '0.875rem' }}>
               {Number.isFinite(analysis.rating)
                 ? `Risk rating: ${analysis.rating}/10`
                 : 'No rating available'}
@@ -164,18 +165,26 @@ const Popup: React.FC = () => {
             {(riskLevel === 'medium' || riskLevel === 'high' || riskLevel === 'very-high') && activeDomain && (
               <button
                 onClick={handleShowMore}
-                className="inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-medium transition hover:opacity-90"
+                className="inline-flex items-center justify-center rounded-lg font-semibold transition-all duration-200"
                 style={{
+                  fontSize: '0.9375rem',
+                  borderWidth: '1.5px',
+                  borderStyle: 'solid',
                   borderColor: config.borderColor,
                   color: config.textColor,
-                  backgroundColor: 'transparent',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  padding: '0.625rem 1.25rem',
+                  boxShadow: `0 2px 8px rgba(0, 0, 0, 0.15)`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = config.buttonHoverShadow;
-                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                  e.currentTarget.style.boxShadow = `0 4px 12px rgba(0, 0, 0, 0.25), ${config.buttonHoverShadow}`;
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.borderColor = config.borderColor;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                  e.currentTarget.style.boxShadow = `0 2px 8px rgba(0, 0, 0, 0.15)`;
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
                 aria-label="View detailed risk analysis"

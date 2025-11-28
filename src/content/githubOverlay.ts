@@ -42,6 +42,10 @@ const getStyleContent = (level: RiskLevel): string => {
 #${OVERLAY_ID} .fraudvisor-heading.font-semibold { font-weight: 600; }
 #${OVERLAY_ID} .fraudvisor-heading { color: #ffffff; }
 
+#${OVERLAY_ID} .fraudvisor-subheading-container.flex { display: flex; }
+#${OVERLAY_ID} .fraudvisor-subheading-container.items-center { align-items: center; }
+#${OVERLAY_ID} .fraudvisor-subheading-container.gap-2 { gap: 0.5rem; }
+
 #${OVERLAY_ID} .fraudvisor-subheading.text-sm { font-size: 0.95rem; line-height: 1.5rem; }
 #${OVERLAY_ID} .fraudvisor-subheading { opacity: 0.9; }
 
@@ -144,11 +148,6 @@ const createOverlay = (analysis: FraudAnalysisResult, level: RiskLevel) => {
   const headingContainer = document.createElement('div');
   headingContainer.className = 'fraudvisor-heading-container flex items-center gap-3';
   
-  // Add Fraudvisor logo
-  const logo = createFraudvisorLogo(24);
-  logo.setAttribute('aria-hidden', 'true');
-  headingContainer.appendChild(logo);
-  
   // Add icon for medium and high risk
   if (level === 'medium') {
     const icon = createBadRepIcon(40);
@@ -165,9 +164,19 @@ const createOverlay = (analysis: FraudAnalysisResult, level: RiskLevel) => {
   heading.textContent = config.heading;
   headingContainer.appendChild(heading);
 
+  // Create subheading container with logo and text
+  const subheadingContainer = document.createElement('div');
+  subheadingContainer.className = 'fraudvisor-subheading-container flex items-center gap-2';
+  
+  // Add Fraudvisor logo
+  const logo = createFraudvisorLogo(24);
+  logo.setAttribute('aria-hidden', 'true');
+  subheadingContainer.appendChild(logo);
+  
   const subheading = document.createElement('p');
   subheading.className = 'fraudvisor-subheading text-sm';
   subheading.textContent = `Fraudvisor analysis: ${analysis.riskFactor ?? 'Unknown'} risk level`;
+  subheadingContainer.appendChild(subheading);
 
   const paragraph = document.createElement('p');
   paragraph.className = 'fraudvisor-message text-sm';
@@ -225,7 +234,7 @@ const createOverlay = (analysis: FraudAnalysisResult, level: RiskLevel) => {
 
   buttonContainer.append(dismissButton);
   actions.append(ratingText, buttonContainer);
-  card.append(headingContainer, subheading, paragraph, actions);
+  card.append(headingContainer, subheadingContainer, paragraph, actions);
   overlay.append(card);
 
   return overlay;
@@ -246,17 +255,9 @@ const renderRiskOverlay = (analysis: FraudAnalysisResult, level: RiskLevel) => {
     const existingShowMoreButton = existingOverlay.querySelector<HTMLAnchorElement>('.fraudvisor-show-more');
 
     if (headingContainer && heading) {
-      // Remove existing risk icons (but keep logo)
-      const existingRiskIcons = headingContainer.querySelectorAll('svg[id!="fraudvisor-logo"]');
+      // Remove existing risk icons
+      const existingRiskIcons = headingContainer.querySelectorAll('svg');
       existingRiskIcons.forEach(icon => icon.remove());
-      
-      // Ensure logo exists
-      let logo = headingContainer.querySelector<SVGSVGElement>('#fraudvisor-logo');
-      if (!logo) {
-        logo = createFraudvisorLogo(24);
-        logo.setAttribute('aria-hidden', 'true');
-        headingContainer.insertBefore(logo, heading);
-      }
       
       // Add icon for medium and high risk
       if (level === 'medium') {
@@ -274,7 +275,39 @@ const renderRiskOverlay = (analysis: FraudAnalysisResult, level: RiskLevel) => {
       heading.textContent = config.heading;
     }
 
-    if (subheading) {
+    // Update subheading container with logo
+    let subheadingContainer = existingOverlay.querySelector<HTMLDivElement>('.fraudvisor-subheading-container');
+    
+    if (!subheadingContainer && subheading) {
+      // Create subheading container if it doesn't exist
+      subheadingContainer = document.createElement('div');
+      subheadingContainer.className = 'fraudvisor-subheading-container flex items-center gap-2';
+      
+      // Add Fraudvisor logo
+      const logo = createFraudvisorLogo(24);
+      logo.setAttribute('aria-hidden', 'true');
+      subheadingContainer.appendChild(logo);
+      
+      // Move subheading into container
+      subheadingContainer.appendChild(subheading);
+      
+      // Insert container after headingContainer
+      if (headingContainer) {
+        headingContainer.insertAdjacentElement('afterend', subheadingContainer);
+      }
+    } else if (subheadingContainer) {
+      // Ensure logo exists in subheading container
+      let logo = subheadingContainer.querySelector<SVGSVGElement>('#fraudvisor-logo');
+      if (!logo) {
+        logo = createFraudvisorLogo(24);
+        logo.setAttribute('aria-hidden', 'true');
+        subheadingContainer.insertBefore(logo, subheadingContainer.firstChild);
+      }
+      
+      if (subheading) {
+        subheading.textContent = `Fraudvisor analysis: ${analysis.riskFactor ?? 'Unknown'} risk level`;
+      }
+    } else if (subheading) {
       subheading.textContent = `Fraudvisor analysis: ${analysis.riskFactor ?? 'Unknown'} risk level`;
     }
 
