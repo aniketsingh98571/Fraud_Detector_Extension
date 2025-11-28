@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "My Chrome Extension",
+    "name": "Fraudvisor",
     "version": "1.0.0",
-    "description": "A Chrome extension built with Vite and React",
+    "description": "A AI based web extension to identify scammers",
     "action": {
       "default_popup": "index.html"
     },
