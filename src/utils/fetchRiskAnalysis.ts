@@ -27,21 +27,43 @@ const RETRY_DELAY_MS = 1000; // Base delay of 1 second
 
 const responseCache = new Map<string, FraudAnalysisResult | null>();
 
+/**
+ * Formats any URL input to extract just the origin (protocol + host) including subdomains.
+ * Returns format: https://domain.com or https://subdomain.domain.com
+ * 
+ * @param rawUrl - Any URL string (with or without protocol, with path/query, etc.)
+ * @returns Formatted URL as origin only, or undefined if invalid
+ */
 const normalizeUrl = (rawUrl: string): string | undefined => {
   if (!rawUrl) {
     return undefined;
   }
 
+  const trimmedUrl = rawUrl.trim();
+  if (!trimmedUrl) {
+    return undefined;
+  }
+
+  let urlString = trimmedUrl;
+
+  // Add https:// if protocol is missing
+  if (!/^https?:\/\//i.test(urlString)) {
+    urlString = `https://${urlString}`;
+  }
+
   try {
-    const url = new URL(rawUrl);
-    return url.href;
-  } catch {
-    try {
-      const prefixedUrl = new URL(`https://${rawUrl}`);
-      return prefixedUrl.href;
-    } catch {
+    const url = new URL(urlString);
+    
+    // Validate protocol (only http/https allowed)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
       return undefined;
     }
+
+    // Return just the origin (protocol + host) - includes subdomains
+    // Always use https:// format (convert http:// to https://)
+    return `https://${url.hostname}`;
+  } catch {
+    return undefined;
   }
 };
 
